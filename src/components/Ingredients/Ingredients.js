@@ -1,28 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
 import IngredientList from "./IngredientList";
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
+  // There is no extaernal dependencies , that's why we added [],
+  // useEffect in this case acts like componentDidMount : It runs only Once (After the first render)
+  // I need to memorize this: with an empty array as a second argument to useEffect, the function i pass
+  // to useEffect is like "ComponentDidMount"
+  // useEffect(() => {
+  //   fetch("https://oshop-e9b68.firebaseio.com/ingredients.json")
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((responseData) => {
+  //       const loadedIngredients = [];
+  //       for (const key in responseData) {
+  //         loadedIngredients.push({
+  //           id: key,
+  //           title: responseData[key].title,
+  //           amount: responseData[key].amount,
+  //         });
+  //       }
+  //       setUserIngredients(loadedIngredients);
+  //     });
+  // }, []);
+  // We can use useEffect many times
+  // The function inside of useEffect will run only if userIngredients change
+  useEffect(() => {
+    console.log("Rendering Ingredients", userIngredients);
+  }, [userIngredients]);
 
-  // It's not a good option to send a request like the following because it leads to an infinite loop,
-  // why we have to use useEffect
-  // fetch("https://oshop-e9b68.firebaseio.com/ingredients.json")
-  //   .then((response) => {
-  //     return response.json();
-  //   })
-  //   .then((responseData) => {
-  //     const loadedIngredients = [];
-  //     for (const key in responseData) {
-  //       loadedIngredients.push({
-  //         id: key,
-  //         title: responseData[key].title,
-  //         amount: responseData[key].amount,
-  //       });
-  //     }
-  //     setUserIngredients(loadedIngredients);
-  //   });
+  const filteredIngredientsHandler = useCallback((filteredIngredients) => {
+    setUserIngredients(filteredIngredients);
+  }, []);
   const addIngredientHandler = (ingredient) => {
     fetch("https://oshop-e9b68.firebaseio.com/ingredients.json", {
       method: "POST",
@@ -54,7 +66,7 @@ const Ingredients = () => {
       <IngredientForm onAddIngredient={addIngredientHandler} />
 
       <section>
-        <Search />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList
           ingredients={userIngredients}
           onRemoveItem={removeIngredientHandler}
