@@ -5,6 +5,7 @@ import Search from "./Search";
 import IngredientList from "./IngredientList";
 const Ingredients = () => {
   const [userIngredients, setUserIngredients] = useState([]);
+
   // There is no extaernal dependencies , that's why we added [],
   // useEffect in this case acts like componentDidMount : It runs only Once (After the first render)
   // I need to memorize this: with an empty array as a second argument to useEffect, the function i pass
@@ -35,6 +36,7 @@ const Ingredients = () => {
   const filteredIngredientsHandler = useCallback((filteredIngredients) => {
     setUserIngredients(filteredIngredients);
   }, []);
+
   const addIngredientHandler = (ingredient) => {
     fetch("https://oshop-e9b68.firebaseio.com/ingredients.json", {
       method: "POST",
@@ -67,6 +69,7 @@ const Ingredients = () => {
 
       <section>
         <Search onLoadIngredients={filteredIngredientsHandler} />
+
         <IngredientList
           ingredients={userIngredients}
           onRemoveItem={removeIngredientHandler}
